@@ -5,30 +5,49 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/25 17:39:52 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/25 18:38:38 by lferro           ###   ########.fr       */
+/*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
+/*   Updated: 2023/10/26 17:58:33 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <fcntl.h>
+
 
 
 char	*get_next_line(int fd)
 {
-	void	*buf;
+	size_t			bytes_read;
+	char			*buf;
+	char			*print;
+	static t_stavar	s;
 
+	bytes_read = 1;
+	buf = malloc(BUFFER_SIZE * sizeof(char));
 
-	read(fd, buf, )
+	s.j = 0;
+	while ((bytes_read) > 0)
+	{
+		bytes_read = read(fd, buf, BUFFER_SIZE);
 
+		buf[bytes_read] = '\0';
+		while (buf[s.i] && buf[s.i] != '\n')
+		{
+			ft_strjoin(print, buf);
+			s.i++;
+		}
+		s.i = 0;
+	}
+	return (print);
 }
 
-int main(int argc, char const *argv[])
+int main()
 {
-
-	fd = open("file.txt", O_RDONLY);
 	int	fd;
 
-	return 0;
+	fd = open("file.txt", O_RDONLY);
+
+	printg("%s", get_next_line(fd));
+
+	return (0);
 }
