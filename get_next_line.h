@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:48:21 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/27 16:15:54 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/28 18:15:22 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ typedef struct s_stavar{
 	char	*residual;
 }	t_stavar;
 
+char	*get_line(char *str);
+int		is_end(char *s);
 size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char *s1, char *s2);
 char	*get_next_line(int fd);
