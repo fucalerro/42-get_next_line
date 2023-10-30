@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/28 18:15:23 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 10:43:09 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	*ft_strdup(const char *s)
 	return (ds);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_f(char *s1, char *s2)
 {
 	char	*res;
 	size_t	*i;
@@ -62,3 +62,17 @@ char	*ft_strjoin(char *s1, char *s2)
 	res[i[0]++] = 0;
 	return (res);
 }
+
+// char	*read_fd(int fd, char *buf, char *stash)
+// {
+// 	size_t	bytes_read;
+
+// 	bytes_read = 1;
+// 	while (bytes_read > 0 && has_newline(stash) == 0)
+// 	{
+// 		bytes_read = read(fd, buf, BUFFER_SIZE);
+// 		buf[bytes_read] = '\0';
+// 		stash = ft_strjoin_f(stash, buf);
+// 	}
+// 	return (bytes_read);
+// }
