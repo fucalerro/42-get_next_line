@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 18:34:28 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 20:31:18 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,15 @@ char	*get_residual(char *str)
 	if (str == NULL)
 	{
 		free(str);
-		return (0);
+		return (NULL);
 	}
 	while (str[i] != '\n' && str[i])
 		i++;
 	residual = malloc((ft_strlen(str) - i) * sizeof(char));
 	if (residual == 0)
 		return (0);
-	i++;
+	if (str[i])
+		i++;
 	while (str[i])
 		residual[j++] = str[i++];
 	residual[j] = 0;
@@ -99,7 +100,14 @@ char	*get_next_line(int fd)
 	t_str		s;
 	int			b_read;
 	char static	*residual;
+	// char		*temp_residual;
 
+	if (read(fd, 0 ,0) == -1)
+	{
+		free(residual);
+		residual = 0;
+		return (0);
+	}
 	if (has_newline(residual) == 1)
 	{
 		s.line = ft_get_line(residual);
@@ -110,12 +118,6 @@ char	*get_next_line(int fd)
 	if (s.buf == 0)
 	{
 		free(s.line);
-		free(residual);
-		return (0);
-	}
-	if (fd < 0 || !s.buf || BUFFER_SIZE <= 0 || read(fd, 0 ,0))
-	{
-		free(s.buf);
 		free(residual);
 		return (0);
 	}
@@ -131,16 +133,20 @@ char	*get_next_line(int fd)
 	return (s.line);
 }
 
-int	main(void)
-{
-	int	fd;
+// int	main(void)
+// {
+// 	int	fd;
 
-	fd = open("file.txt", O_RDONLY);
-	for (int i = 0; i < 8; i++)
-		printf("line [%02d]: %s", i + 1, get_next_line(fd));
-	close(fd);
-	// char *next_line = get_next_line(fd);
-	// printf("line: %s", next_line);
-	// free(next_line);
-	return (0);
-}
+// 	fd = open("giant_line.txt", O_RDONLY);
+// 	char *str;
+// 	while ((str = get_next_line(fd)))
+// 		printf("%s", str);
+// 	//printf("%s", get_next_line(fd));
+// 	// for (int i = 0; i < 8; i++)
+// 		// printf("%s", get_next_line(fd));
+// 	close(fd);
+// 	// char *next_line = get_next_line(fd);
+// 	// printf("line: %s", next_line);
+// 	// free(next_line);
+// 	return (0);
+// }

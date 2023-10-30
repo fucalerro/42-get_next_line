@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 18:27:47 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 20:31:06 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*ft_strjoin_f(char *s1, char *s2)
 		res[i[0]++] = *s1++;
 	while (*s2)
 		res[i[0]++] = *s2++;
-	res[i[0]++] = 0;
+	res[i[0]] = 0;
 	return (res);
 }
 
