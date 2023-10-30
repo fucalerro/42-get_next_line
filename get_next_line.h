@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:48:21 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:04:59 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 11:47:52 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef struct s_stavar
+typedef struct s_str
 {
-	char	*str;
-	int		i;
-	char	*residual;
-}			t_stavar;
+	char	*buf;
+	char	*stash;
+	char	*line;
+}			t_str;
 
 int			has_newline(char *s);
 int			read_fd(int fd, char *buf, char **stash);

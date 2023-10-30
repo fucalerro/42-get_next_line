@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:02:17 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 11:43:57 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ int	read_fd(int fd, char *buf, char **stash)
 	while (bytes_read > 0 && has_newline(*stash) == 0)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		buf[bytes_read] = '\0';
+		// if (bytes_read > 0)
+			buf[bytes_read] = '\0';
 		*stash = ft_strjoin_f(*stash, buf);
 	}
 	return (bytes_read);

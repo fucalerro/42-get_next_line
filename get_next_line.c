@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:07:14 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 11:47:56 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ int	is_end(char *s)
 	int	i;
 
 	i = 0;
+	if (s == 0)
+		return (0);
 	while (s[i] != 0)
 		i++;
 	if (i == 0)
@@ -87,6 +89,7 @@ char	*get_next_line(int fd)
 	char		*stash;
 	char		*line;
 	char static	*residual;
+	int			bytes_read;
 
 	if (has_newline(residual) == 1)
 	{
@@ -94,13 +97,15 @@ char	*get_next_line(int fd)
 		residual = get_residual(residual);
 		return (line);
 	}
-	if (fd < 0)
-		return (0);
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (fd < 0 || !buf)
+		return (0);
 	stash = 0;
-	read_fd(fd, buf, &stash);
+	bytes_read = read_fd(fd, buf, &stash);
 	free(buf);
 	buf = 0;
+	if (bytes_read <= 0)
+		return (ft_strdup("(null)"));
 	line = ft_strjoin_f(residual, get_line(stash));
 	residual = get_residual(stash);
 	free(stash);
