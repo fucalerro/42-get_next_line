@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:48:21 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 10:42:28 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 11:04:59 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,22 +18,24 @@
 # endif
 
 # include <fcntl.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <stdio.h>
 
-typedef struct s_stavar{
+typedef struct s_stavar
+{
 	char	*str;
 	int		i;
 	char	*residual;
-}	t_stavar;
+}			t_stavar;
 
-char	*read_fd(int fd, char *buf, char *stash);
-char	*ft_strdup(const char *s);
-char	*get_line(char *str);
-int		is_end(char *s);
-size_t	ft_strlen(const char *s);
-char	*ft_strjoin_f(char *s1, char *s2);
-char	*get_next_line(int fd);
+int			has_newline(char *s);
+int			read_fd(int fd, char *buf, char **stash);
+char		*ft_strdup(const char *s);
+char		*get_line(char *str);
+int			is_end(char *s);
+size_t		ft_strlen(const char *s);
+char		*ft_strjoin_f(char *s1, char *s2);
+char		*get_next_line(int fd);
 
 #endif

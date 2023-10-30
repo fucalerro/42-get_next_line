@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 10:43:24 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 11:07:14 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ char	*get_line(char *str)
 		res[i] = str[i];
 	res[i++] = '\n';
 	res[i] = '\0';
-	// free(str);
 	return (res);
 }
 
@@ -84,11 +83,9 @@ int	is_end(char *s)
 
 char	*get_next_line(int fd)
 {
-	size_t		bytes_read;
 	char		*buf;
 	char		*stash;
 	char		*line;
-	char		*new_line;
 	char static	*residual;
 
 	if (has_newline(residual) == 1)
@@ -97,52 +94,30 @@ char	*get_next_line(int fd)
 		residual = get_residual(residual);
 		return (line);
 	}
-
 	if (fd < 0)
 		return (0);
-
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	stash = 0;
-	bytes_read = 1;
-
-	while (bytes_read > 0 && has_newline(stash) == 0)
-	{
-		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (is_end(buf))
-		{
-			line = malloc(7 * sizeof(char));
-			line = "(null)";
-			// free(buf);
-			return (line);
-		}
-		buf[bytes_read] = '\0';
-		stash = ft_strjoin_f(stash, buf);
-	}
+	read_fd(fd, buf, &stash);
 	free(buf);
 	buf = 0;
-	line = get_line(stash);
-	new_line = ft_strjoin_f(residual, line);
+	line = ft_strjoin_f(residual, get_line(stash));
 	residual = get_residual(stash);
 	free(stash);
 	stash = 0;
-	return (new_line);
-
+	return (line);
 }
 
-
-int main()
+int	main(void)
 {
 	int	fd;
 
 	fd = open("file.txt", O_RDONLY);
-
 	for (int i = 0; i < 8; i++)
 		printf("line [%02d]: %s", i + 1, get_next_line(fd));
-
 	close(fd);
 	// char *next_line = get_next_line(fd);
 	// printf("line: %s", next_line);
 	// free(next_line);
-
 	return (0);
 }
