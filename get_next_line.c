@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:47:56 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 17:00:40 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,21 @@
 // Get a line with '\n' at the end from a str containing '\n'
 // Param1:	String containing '\n'
 // Return:	a line with \n at the end
-char	*get_line(char *str)
+char	*ft_get_line(char *str)
 {
 	char	*res;
 	size_t	i;
 
 	i = 0;
+	if (str == 0)
+		return (0);
 	while (str[i] != '\n' && str[i])
 		i++;
 	if (i == ft_strlen(str))
 		return (ft_strdup(str));
 	res = malloc((i + 2) * sizeof(char));
+	if (res == 0)
+		return (0);
 	i = -1;
 	while (str[++i] != '\n' && str[i])
 		res[i] = str[i];
@@ -43,13 +47,18 @@ char	*get_residual(char *str)
 
 	i = 0;
 	j = 0;
+	if (str == NULL)
+	{
+		free(str);
+		return (0);
+	}
 	while (str[i] != '\n' && str[i])
 		i++;
 	residual = malloc((ft_strlen(str) - i) * sizeof(char));
 	i++;
 	while (str[i])
 		residual[j++] = str[i++];
-	residual[i] = 0;
+	residual[j] = 0;
 	return (residual);
 }
 
@@ -85,32 +94,33 @@ int	is_end(char *s)
 
 char	*get_next_line(int fd)
 {
-	char		*buf;
-	char		*stash;
-	char		*line;
+	t_str		s;
+	int			b_read;
 	char static	*residual;
-	int			bytes_read;
 
 	if (has_newline(residual) == 1)
 	{
-		line = get_line(residual);
+		s.line = ft_get_line(residual);
 		residual = get_residual(residual);
-		return (line);
+		return (s.line);
 	}
-	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (fd < 0 || !buf)
+	s.buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (fd < 0 || !s.buf || BUFFER_SIZE <= 0 || read(fd, 0 ,0))
+	{
+		free(s.buf);
+		free(residual);
 		return (0);
-	stash = 0;
-	bytes_read = read_fd(fd, buf, &stash);
-	free(buf);
-	buf = 0;
-	if (bytes_read <= 0)
-		return (ft_strdup("(null)"));
-	line = ft_strjoin_f(residual, get_line(stash));
-	residual = get_residual(stash);
-	free(stash);
-	stash = 0;
-	return (line);
+	}
+	s.stash = 0;
+	b_read = read_fd(fd, s.buf, &s.stash);
+
+	s.line = ft_strjoin_f(residual, ft_get_line(s.stash));
+	residual = get_residual(s.stash);
+	if (residual == 0)
+		free(residual);
+	free(s.stash);
+	s.stash = 0;
+	return (s.line);
 }
 
 int	main(void)

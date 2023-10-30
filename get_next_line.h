@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:48:21 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:47:52 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 12:18:10 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ typedef struct s_str
 int			has_newline(char *s);
 int			read_fd(int fd, char *buf, char **stash);
 char		*ft_strdup(const char *s);
-char		*get_line(char *str);
+char		*ft_get_line(char *str);
 int			is_end(char *s);
 size_t		ft_strlen(const char *s);
 char		*ft_strjoin_f(char *s1, char *s2);

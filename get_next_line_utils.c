@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 11:43:57 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 16:01:41 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,23 @@ char	*ft_strjoin_f(char *s1, char *s2)
 
 int	read_fd(int fd, char *buf, char **stash)
 {
-	size_t	bytes_read;
+	size_t	b_read;
 
-	bytes_read = 1;
-	while (bytes_read > 0 && has_newline(*stash) == 0)
+	b_read = 1;
+	while (b_read > 0 && has_newline(*stash) == 0)
 	{
-		bytes_read = read(fd, buf, BUFFER_SIZE);
-		// if (bytes_read > 0)
-			buf[bytes_read] = '\0';
+		b_read = read(fd, buf, BUFFER_SIZE);
+		if (b_read < 0)
+		{
+			free(*stash);
+			return (0);
+		}
+		else if (b_read == 0)
+			break ;
+		buf[b_read] = 0;
 		*stash = ft_strjoin_f(*stash, buf);
 	}
-	return (bytes_read);
+	free(buf);
+	buf = 0;
+	return (b_read);
 }
