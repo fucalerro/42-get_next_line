@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 17:00:40 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/30 18:34:28 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 // Return:	a line with \n at the end
 char	*ft_get_line(char *str)
 {
-	char	*res;
+	char	*line;
 	size_t	i;
 
 	i = 0;
@@ -27,15 +27,15 @@ char	*ft_get_line(char *str)
 		i++;
 	if (i == ft_strlen(str))
 		return (ft_strdup(str));
-	res = malloc((i + 2) * sizeof(char));
-	if (res == 0)
+	line = malloc((i + 2) * sizeof(char));
+	if (line == 0)
 		return (0);
 	i = -1;
 	while (str[++i] != '\n' && str[i])
-		res[i] = str[i];
-	res[i++] = '\n';
-	res[i] = '\0';
-	return (res);
+		line[i] = str[i];
+	line[i++] = '\n';
+	line[i] = '\0';
+	return (line);
 }
 
 // Returns the residual string after the '\n' of str
@@ -55,6 +55,8 @@ char	*get_residual(char *str)
 	while (str[i] != '\n' && str[i])
 		i++;
 	residual = malloc((ft_strlen(str) - i) * sizeof(char));
+	if (residual == 0)
+		return (0);
 	i++;
 	while (str[i])
 		residual[j++] = str[i++];
@@ -105,6 +107,12 @@ char	*get_next_line(int fd)
 		return (s.line);
 	}
 	s.buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (s.buf == 0)
+	{
+		free(s.line);
+		free(residual);
+		return (0);
+	}
 	if (fd < 0 || !s.buf || BUFFER_SIZE <= 0 || read(fd, 0 ,0))
 	{
 		free(s.buf);
