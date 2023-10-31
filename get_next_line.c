@@ -5,41 +5,62 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/26 14:13:42 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/30 20:31:18 by lferro           ###   ########.fr       */
+/*   Created: 2023/10/31 10:12:41 by lferro            #+#    #+#             */
+/*   Updated: 2023/10/31 17:41:52 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <string.h>
 
-// Get a line with '\n' at the end from a str containing '\n'
-// Param1:	String containing '\n'
-// Return:	a line with \n at the end
-char	*ft_get_line(char *str)
+char	*line_read(int fd, char *buf, char *stash)
 {
-	char	*line;
-	size_t	i;
+	int		bread;
+	char	*temp_stash;
 
-	i = 0;
-	if (str == 0)
-		return (0);
-	while (str[i] != '\n' && str[i])
-		i++;
-	if (i == ft_strlen(str))
-		return (ft_strdup(str));
-	line = malloc((i + 2) * sizeof(char));
-	if (line == 0)
-		return (0);
-	i = -1;
-	while (str[++i] != '\n' && str[i])
-		line[i] = str[i];
-	line[i++] = '\n';
-	line[i] = '\0';
-	return (line);
+	bread = 1;
+	while (bread > 0)
+	{
+		bread = read(fd, buf, BUFFER_SIZE);
+		if (bread < 0)
+		{
+			free(buf);
+			return (NULL);
+		}
+		else if (bread == 0)
+			break ;
+		buf[bread] = 0;
+		if (!stash)
+			stash = ft_strdup("");
+		temp_stash = stash;
+		stash = ft_strjoin(temp_stash, buf);
+		free(temp_stash);
+		if (ft_strchr(stash, '\n'))
+			break ;
+	}
+	return (stash);
 }
 
-// Returns the residual string after the '\n' of str
-char	*get_residual(char *str)
+
+char	*sub_line(char *line)
+{
+	char	*newline;
+	int		i;
+
+	i = 0;
+	newline = malloc(sizeof(char) * (ft_strlen(line) + 1));
+	while (line[i] && line[i] != '\n')
+	{
+		newline[i] = line[i];
+		i++;
+	}
+	if (line[i] == '\n')
+		newline[i++] = '\n';
+	newline[i] = '\0';
+	return (newline);
+}
+
+char	*get_residual(char *stash)
 {
 	int		i;
 	int		j;
@@ -47,106 +68,61 @@ char	*get_residual(char *str)
 
 	i = 0;
 	j = 0;
-	if (str == NULL)
-	{
-		free(str);
+	if (!stash)
+		return (ft_strdup(""));
+	residual = malloc(ft_strlen(stash) * sizeof(char));
+	if (!residual)
 		return (NULL);
-	}
-	while (str[i] != '\n' && str[i])
+	while (stash[i] && stash[i] != '\n')
 		i++;
-	residual = malloc((ft_strlen(str) - i) * sizeof(char));
-	if (residual == 0)
-		return (0);
-	if (str[i])
+	if (stash[i] == '\n')
 		i++;
-	while (str[i])
-		residual[j++] = str[i++];
+	while (stash[i])
+		residual[j++] = stash[i++];
 	residual[j] = 0;
 	return (residual);
 }
 
-int	has_newline(char *s)
-{
-	int	i;
-
-	i = 0;
-	if (s == NULL)
-		return (0);
-	while (s[i])
-	{
-		if (s[i] == '\n')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-int	is_end(char *s)
-{
-	int	i;
-
-	i = 0;
-	if (s == 0)
-		return (0);
-	while (s[i] != 0)
-		i++;
-	if (i == 0)
-		return (1);
-	return (0);
-}
-
 char	*get_next_line(int fd)
 {
-	t_str		s;
-	int			b_read;
-	char static	*residual;
-	// char		*temp_residual;
+	char		*buf;
+	char		*line;
+	static char	*stash;
 
-	if (read(fd, 0 ,0) == -1)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buf)
+		return (NULL);
+	line = line_read(fd, buf, stash);
+	free(buf);
+	buf = 0;
+	if (!line)
 	{
-		free(residual);
-		residual = 0;
-		return (0);
+		free(stash);
+		return (NULL);
 	}
-	if (has_newline(residual) == 1)
+	stash = get_residual(line);
+	line = sub_line(line);
+	if (strcmp(line, "") == 0)
 	{
-		s.line = ft_get_line(residual);
-		residual = get_residual(residual);
-		return (s.line);
+		free(line);
+		free(stash);
+		return NULL;
 	}
-	s.buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (s.buf == 0)
-	{
-		free(s.line);
-		free(residual);
-		return (0);
-	}
-	s.stash = 0;
-	b_read = read_fd(fd, s.buf, &s.stash);
-
-	s.line = ft_strjoin_f(residual, ft_get_line(s.stash));
-	residual = get_residual(s.stash);
-	if (residual == 0)
-		free(residual);
-	free(s.stash);
-	s.stash = 0;
-	return (s.line);
+	return (line);
 }
 
-// int	main(void)
+// int main()
 // {
-// 	int	fd;
+// 	int fd = open("file.txt", O_RDONLY);
 
-// 	fd = open("giant_line.txt", O_RDONLY);
-// 	char *str;
-// 	while ((str = get_next_line(fd)))
+// 	char	*str;
+// 	while((str = get_next_line(fd)))
 // 		printf("%s", str);
-// 	//printf("%s", get_next_line(fd));
-// 	// for (int i = 0; i < 8; i++)
-// 		// printf("%s", get_next_line(fd));
 // 	close(fd);
-// 	// char *next_line = get_next_line(fd);
-// 	// printf("line: %s", next_line);
-// 	// free(next_line);
+
+
+
 // 	return (0);
 // }
