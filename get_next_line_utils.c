@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/11/05 08:52:02 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/05 10:07:24 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,48 +22,74 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-// char	*strdup_or_strchr(const char *s, int mode)
-// {
-
-// }
-
-
-char	*ft_strdup(const char *s)
+char	*freeyator(char **s)
 {
-	char	*ds;
-	size_t	i;
-
-	if (s == NULL)
-		return (NULL);
-	ds = (char *)malloc(sizeof(char) * ft_strlen(s) + 1);
-	if (ds == NULL)
-		return (NULL);
-	i = 0;
-	while (s[i])
-	{
-		ds[i] = s[i];
-		i++;
-	}
-	ds[i] = 0;
-	return (ds);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	int	i;
-
-	c = (char)c;
-	i = 0;
-	if (c == '\0')
-		return ((char *)&s[ft_strlen(s)]);
-	while (s[i])
-	{
-		if (s[i] == c)
-			return ((char *)&s[i]);
-		i++;
-	}
+	free(*s);
+	*s = 0;
 	return (NULL);
 }
+
+char	*strdup_or_strchr(const char *s, int mode, int c)
+{
+	char	*res;
+	size_t	i;
+
+	i = -1;
+	if (mode == DUP_MODE)
+	{
+		if (s == NULL)
+			return (NULL);
+		res = (char *)malloc(sizeof(char) * ft_strlen(s) + 1);
+		if (res == NULL)
+			return (NULL);
+		i = -1;
+		while (s[++i])
+			res[i] = s[i];
+		res[i] = 0;
+		return (res);
+	}
+	c = (char)c;
+	if (c == '\0')
+		return ((char *)&s[ft_strlen(s)]);
+	while (s[++i])
+		if (s[i] == c)
+			return ((char *)&s[i]);
+	return (NULL);
+}
+
+// char	*ft_strdup(const char *s)
+// {
+// 	char	*res;
+// 	size_t	i;
+
+// 	if (s == NULL)
+// 		return (NULL);
+// 	res = (char *)malloc(sizeof(char) * ft_strlen(s) + 1);
+// 	if (res == NULL)
+// 		return (NULL);
+// 	i = -1;
+// 	while (s[++i])
+// 		res[i] = s[i];
+// 	res[i] = 0;
+// 	return (res);
+// }
+
+// char	*ft_strchr(const char *s, int c)
+// {
+// 	size_t	i;
+
+// 	c = (char)c;
+// 	i = 0;
+// 	if (c == '\0')
+// 		return ((char *)&s[ft_strlen(s)]);
+// 	while (s[i])
+// 	{
+// 		if (s[i] == c)
+// 			return ((char *)&s[i]);
+// 		i++;
+// 	}
+// 	return (NULL);
+// }
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -86,7 +112,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2[j])
 		res[i++] = s2[j++];
 	res[i] = 0;
-	// free(s1);
 	return (res);
 }
 
@@ -100,7 +125,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 	i = 0;
 	j = 0;
 	if (start > ft_strlen(s))
-		return (ft_strdup(""));
+		return (strdup_or_strchr("", DUP_MODE, 'a'));
 	if (start + len > ft_strlen(s))
 		len = ft_strlen(s) - start;
 	res = malloc(sizeof(char) * (len + 1));

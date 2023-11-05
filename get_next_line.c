@@ -6,13 +6,15 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 10:12:41 by lferro            #+#    #+#             */
-/*   Updated: 2023/11/05 08:49:37 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/05 10:17:55 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <string.h>
 
+// read fd and return raw line with \n and the leftover
+// from the buffer (stash var)
 char	*line_read(int fd, char *buf, char *stash)
 {
 	int		bread;
@@ -28,17 +30,19 @@ char	*line_read(int fd, char *buf, char *stash)
 			break ;
 		buf[bread] = 0;
 		if (!stash)
-			stash = ft_strdup("");
+			stash = strdup_or_strchr("", DUP_MODE, 'a');
 		temp_stash = stash;
 		stash = ft_strjoin(temp_stash, buf);
 		free(temp_stash);
-		if (ft_strchr(stash, '\n'))
+		if (strdup_or_strchr(stash, CHR_MODE, '\n'))
 			break ;
 	}
 	return (stash);
 }
 
-
+// SUB_LINE
+// params:	raw line to remove residual from
+// return:	clean line with \n at the end
 char	*sub_line(char *line)
 {
 	char	*newline;
@@ -56,21 +60,19 @@ char	*sub_line(char *line)
 	newline[i] = '\0';
 	return (newline);
 }
-typedef struct s_get_residual
-{
-	int i;
-	int j;
-	char *residual;
-}	t_get_residual;
+
+// GET_RESIDUAL
+// params:	raw line to get residual from
+// return:	string after the \n from line
 char	*get_residual(char *line)
 {
-	t_get_residual var;
+	t_get_residual	var;
 
-	var.i= 0;
-	var.j= 0;
+	var.i = 0;
+	var.j = 0;
 	var.residual = malloc(ft_strlen(line) * sizeof(char));
 	if (!line)
-		return (ft_strdup(""));
+		return (strdup_or_strchr("", DUP_MODE, 'a'));
 	if (!var.residual)
 		return (NULL);
 	while (line[var.i] && line[var.i] != '\n')
@@ -83,6 +85,10 @@ char	*get_residual(char *line)
 	return (var.residual);
 }
 
+// GET_NEXT_LINE
+// After error handling, get raw line, get residual, cut line.
+// params: file descriptor to return line from
+// return: current line
 char	*get_next_line(int fd)
 {
 	char		*buf;
@@ -90,36 +96,22 @@ char	*get_next_line(int fd)
 	static char	*stash;
 	char		*res;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
-	{
-		free(stash);
-		stash = 0;
-		return (NULL);
-	}
+	if (BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
+		return (freeyator(&stash));
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
 	line = line_read(fd, buf, stash);
-	free(buf);
-	buf = 0;
+	freeyator(&buf);
 	if (!line)
-	{
-		free(stash);
-		stash = 0;
-		return (NULL);
-	}
+		return (freeyator(&line));
 	res = sub_line(line);
 	stash = get_residual(line);
-	free(line);
-	line = 0;
-	if ( *res == '\0')
-	{
-		free(res);
-		free(stash);
-		res = 0;
-		stash = 0;
-		return NULL;
-	}
+	freeyator(&line);
+	if (*res == '\0')
+		freeyator(&stash);
+	if (*res == '\0')
+		return (freeyator(&res));
 	return (res);
 }
 
@@ -132,7 +124,6 @@ char	*get_next_line(int fd)
 // 		printf("%s", str);
 // 	close(fd);
 // 	free(str);
-
 
 // 	return (0);
 // }
