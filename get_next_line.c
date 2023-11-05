@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 10:12:41 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/31 17:41:52 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:17:03 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,7 @@ char	*line_read(int fd, char *buf, char *stash)
 	{
 		bread = read(fd, buf, BUFFER_SIZE);
 		if (bread < 0)
-		{
-			free(buf);
 			return (NULL);
-		}
 		else if (bread == 0)
 			break ;
 		buf[bread] = 0;
@@ -89,8 +86,12 @@ char	*get_next_line(int fd)
 	char		*line;
 	static char	*stash;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
+	{
+		free(stash);
+		stash = 0;
 		return (NULL);
+	}
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
@@ -104,10 +105,11 @@ char	*get_next_line(int fd)
 	}
 	stash = get_residual(line);
 	line = sub_line(line);
-	if (strcmp(line, "") == 0)
+	if ( *line == '\0')
 	{
 		free(line);
 		free(stash);
+		stash = 0;
 		return NULL;
 	}
 	return (line);

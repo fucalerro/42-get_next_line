@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/31 17:41:55 by lferro           ###   ########.fr       */
+/*   Updated: 2023/10/31 17:46:37 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,34 +59,6 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-
-
-// int	read_fd(int fd, char *buf, char **stash)
-// {
-// 	size_t	b_read;
-
-// 	b_read = 1;
-// 	while (b_read > 0 && has_newline(*stash) == 0)
-// 	{
-// 		b_read = read(fd, buf, BUFFER_SIZE);
-// 		if (b_read < 0)
-// 		{
-// 			// free(*stash);
-// 			return (0);
-// 		}
-// 		else if (b_read == 0)
-// 			break ;
-// 		buf[b_read] = 0;
-// 		*stash = ft_strjoin_f(*stash, buf);
-// 	}
-// 	// free(buf);
-// 	buf = 0;
-// 	return (b_read);
-// }
-
-
-
-
 char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*res;
@@ -111,7 +83,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	// free(s1);
 	return (res);
 }
-
 
 char	*ft_substr(const char *s, unsigned int start, size_t len)
 {
