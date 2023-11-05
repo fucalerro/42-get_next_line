@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 10:12:41 by lferro            #+#    #+#             */
-/*   Updated: 2023/11/05 08:17:03 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:49:37 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,28 +56,31 @@ char	*sub_line(char *line)
 	newline[i] = '\0';
 	return (newline);
 }
-
-char	*get_residual(char *stash)
+typedef struct s_get_residual
 {
-	int		i;
-	int		j;
-	char	*residual;
+	int i;
+	int j;
+	char *residual;
+}	t_get_residual;
+char	*get_residual(char *line)
+{
+	t_get_residual var;
 
-	i = 0;
-	j = 0;
-	if (!stash)
+	var.i= 0;
+	var.j= 0;
+	var.residual = malloc(ft_strlen(line) * sizeof(char));
+	if (!line)
 		return (ft_strdup(""));
-	residual = malloc(ft_strlen(stash) * sizeof(char));
-	if (!residual)
+	if (!var.residual)
 		return (NULL);
-	while (stash[i] && stash[i] != '\n')
-		i++;
-	if (stash[i] == '\n')
-		i++;
-	while (stash[i])
-		residual[j++] = stash[i++];
-	residual[j] = 0;
-	return (residual);
+	while (line[var.i] && line[var.i] != '\n')
+		var.i++;
+	if (line[var.i] == '\n')
+		var.i++;
+	while (line[var.i])
+		var.residual[var.j++] = line[var.i++];
+	var.residual[var.j] = 0;
+	return (var.residual);
 }
 
 char	*get_next_line(int fd)
@@ -85,6 +88,7 @@ char	*get_next_line(int fd)
 	char		*buf;
 	char		*line;
 	static char	*stash;
+	char		*res;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
 	{
@@ -101,18 +105,22 @@ char	*get_next_line(int fd)
 	if (!line)
 	{
 		free(stash);
+		stash = 0;
 		return (NULL);
 	}
+	res = sub_line(line);
 	stash = get_residual(line);
-	line = sub_line(line);
-	if ( *line == '\0')
+	free(line);
+	line = 0;
+	if ( *res == '\0')
 	{
-		free(line);
+		free(res);
 		free(stash);
+		res = 0;
 		stash = 0;
 		return NULL;
 	}
-	return (line);
+	return (res);
 }
 
 // int main()
@@ -123,7 +131,7 @@ char	*get_next_line(int fd)
 // 	while((str = get_next_line(fd)))
 // 		printf("%s", str);
 // 	close(fd);
-
+// 	free(str);
 
 
 // 	return (0);

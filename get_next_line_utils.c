@@ -6,7 +6,7 @@
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/25 17:46:04 by lferro            #+#    #+#             */
-/*   Updated: 2023/10/31 17:46:37 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/05 08:52:02 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
+
+// char	*strdup_or_strchr(const char *s, int mode)
+// {
+
+// }
+
 
 char	*ft_strdup(const char *s)
 {
