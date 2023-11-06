@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lferro <lferro@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 10:12:41 by lferro            #+#    #+#             */
-/*   Updated: 2023/11/06 10:39:34 by lferro           ###   ########.fr       */
+/*   Updated: 2023/11/06 10:39:30 by lferro           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <string.h>
 
 // read fd and return raw line with \n and the leftover
@@ -93,23 +93,23 @@ char	*get_next_line(int fd)
 {
 	char		*buf;
 	char		*line;
-	static char	*stash;
+	static char	*stash[10420];
 	char		*res;
 
 	if (BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
-		return (freeyator(&stash));
+		return (freeyator(&stash[fd]));
 	buf = malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
-	line = line_read(fd, buf, stash);
+	line = line_read(fd, buf, stash[fd]);
 	freeyator(&buf);
 	if (!line)
 		return (freeyator(&line));
 	res = sub_line(line);
-	stash = get_residual(line);
+	stash[fd] = get_residual(line);
 	freeyator(&line);
 	if (*res == '\0')
-		freeyator(&stash);
+		freeyator(&stash[fd]);
 	if (*res == '\0')
 		return (freeyator(&res));
 	return (res);
